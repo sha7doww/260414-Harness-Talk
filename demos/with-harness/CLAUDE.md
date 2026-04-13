@@ -28,9 +28,10 @@ problems/<problem-name>/
 3. 先写代码，再用 `scripts/pipeline.sh <problem-name>` 验证整个流程
 4. 如果 pipeline 失败，阅读错误信息并修复，不要跳过验证步骤
 5. 数据至少生成 10 组，包含边界情况
+6. 必须写一个 generate.sh，由它调用 generator 产出所有 .in 文件；不要绕过 generate.sh 直接在终端跑 generator
 
 ## 常见错误提醒
 
 - 不要忘记 validator，它和 generator 同样重要
 - generate.sh 必须有执行权限（chmod +x）
-- data/ 目录不要手动创建文件，由 pipeline 生成
+- data/ 下的 .in/.out 不要手写，由你写的 generate.sh + pipeline 自动产出

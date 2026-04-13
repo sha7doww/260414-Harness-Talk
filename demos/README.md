@@ -1,6 +1,6 @@
 # 演示脚本
 
-> Demo 1（ChatGPT 网页版）只在 outline 里讲，不放在本目录。这里只放 Demo 2/3/4 用得到的文件。
+> Demo 1（ChatGPT 网页版）只在 talk.md 里讲，不放在本目录。这里只放 Demo 2/3/4 用得到的文件。
 
 ## 演示顺序
 
