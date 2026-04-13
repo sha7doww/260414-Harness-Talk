@@ -1,0 +1,12 @@
+[submodule "repos/CP_problems"]
+	path = repos/CP_problems
+	url = https://github.com/sha7doww/CP_problems.git
+[submodule "repos/paper-toolkit"]
+	path = repos/paper-toolkit
+	url = https://github.com/sha7doww/paper-toolkit.git
+[submodule "repos/AKO4ALL"]
+	path = repos/AKO4ALL
+	url = https://github.com/TongmingLAIC/AKO4ALL.git
+[submodule "repos/remote-toolkit"]
+	path = repos/remote-toolkit
+	url = https://github.com/sha7doww/remote-toolkit.git
