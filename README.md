@@ -6,11 +6,11 @@
 
 ## 目录结构
 
-- `outline.md` / `outline_en.md` - 讲座大纲（中英文）
+- `talk.md` / `talk_en.md` - 讲座 runbook（中英文，含大纲 + 时间线 + 演示脚本）
 - `slides/` - PPT 和图片素材
 - `demos/` - 现场演示用目录
-  - `bare/` - Demo A：裸 agent 演示
-  - `with-harness/` - Demo B/C：带最小 harness 演示
+  - `bare/` - Demo 2：裸 agent 演示
+  - `with-harness/` - Demo 3/4：带最小 harness 演示 + 迭代
 - `repos/` - 参考/演示 repo（git submodule）
 - `references/` - 参考资料和延伸阅读
 - `assets/` - 海报、热场图片等素材

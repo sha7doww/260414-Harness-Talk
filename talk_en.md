@@ -12,6 +12,8 @@ Using Claude Code as the example, but the method applies to all Coding Agents (C
 **Main thread**: Talking → Doing → Doing Stably → Extending On Demand
 
 **Narrative arc**:
+
+- Warmup (-3 → 0 min): two images to set up "AI has already changed the way I work myself", naturally introducing the division of labor between conversational AI and coding agents
 - First half (Talking → Doing → Doing Stably): use the same task in three environments to build intuition
 - Second half (Extending On Demand): use cases from different domains to show how a harness grows in different directions based on task needs
 
@@ -29,7 +31,7 @@ Using Claude Code as the example, but the method applies to all Coding Agents (C
 - Prompt vs harness: a prompt governs what to do *this turn*; a harness governs how *this kind of task* gets done reliably
 - The four components of a minimal harness:
   - **Structure**: directories, naming, templates
-  - **Actions**: run / build / test scripts
+  - **Actions / Tools**: run / build / test scripts
   - **Judge**: validators, checkers, benchmarks
   - **Memory**: progress, iterations, logs
 - A harness is never written in one shot: build → use → observe failures → write them back → use again (iterative loop)
@@ -40,12 +42,13 @@ Using Claude Code as the example, but the method applies to all Coding Agents (C
 The minimal harness gave you the intuition. But different tasks demand different harnesses, and the extensions go in different directions — not a linear progression, but two parallel directions you can combine as needed:
 
 - **Solidify workflow**: fix repetitive processes in place; humans remain the main judge
-  - CP_problems: standard directories + CLAUDE.md + pipeline + testlib
   - paper-toolkit: paper repo layout + meta.yaml + phases + pt CLI
 - **Solidify evaluation loop**: when the task has a clear metric, the harness doesn't just stabilize the workflow — it lets the agent iterate and improve itself
+  - autoresearch, autokernel
   - AKO4ALL: setup → profile → iterate → track, ITERATIONS.md, trajectory
+  - Prerequisites: quantifiable metric, clear target, simple evaluation, narrow modification scope
 
-Essence: how much of the work that used to live in your head, do you outsource to the external system
+Essence: how much of the work that used to live in your head do you outsource to the external system
 
 ### 4. Boundaries and Outlook
 
@@ -53,23 +56,50 @@ Essence: how much of the work that used to live in your head, do you outsource t
 - Worth it: repeated, long-running, has external feedback, high failure cost, needs cross-session resume
 - Not worth it: one-off, no clear judge, faster to do by hand
 - Find the simplest thing that works first; add complexity only as needed
+- As the model gets stronger, peel back complexity as needed
+- **The essence: probing the boundary of the model's capability**
 
 **What if we push this further:**
-- Some people are already building "auto-research systems": ARIS (lightweight Markdown-only skill set, cross-agent), AI Scientist-v2 (end-to-end automated paper generation)
+
+- Some people are already building "auto-research systems":
+  - ARIS (lightweight Markdown-only skill set, cross-agent)
+  - AI Scientist-v2 (end-to-end automated paper generation)
 - But the boundaries are clear: AI Scientist-v2 itself admits low success on open-ended exploration and requires sandboxed execution; independent evaluations point out weak novelty assessment and high code-error rates
 - My take: no system will reliably replace researchers in the short term, but verifiable, recordable, resumable sub-tasks in research will be harness-ified fast. For most of us, the realistic path isn't chasing a universal auto-scientist — it's identifying which parts of your work can be outsourced to structure, scripts, evaluation, and memory
 
 ### Key lines
 
 - The model sets the ceiling; the harness sets the floor
-- A prompt governs this turn; a harness governs this kind
-- Stability doesn't come from longer prompts — it comes from a better repo environment
+- Stability doesn't come from longer prompts — it comes from a better harness
+- A good harness doesn't constrain the model, it unleashes it — that is what probing the boundary of the model's capability really means
 
 ---
 
 ## Timeline
 
 Pacing rule: every 8–12 minutes, something new should happen on the screen
+
+### Warmup (-3 → 0 min)
+
+#### -3 → 0 min | Warmup: two images + personal disclose [Talk]
+
+1. Show image 1: web novel cover (`assets/warmup-novel.jpeg`)
+   - One sentence: time-traveled to ancient times, the power grid is fully down, but you still have Opus 4.6 and GPT 5.4 in your head — one night of work outputs what others would write in five days
+   - Let the laughter land
+
+2. Show image 2: Hanchen Li's /life page screenshot (`assets/warmup-hanchen-life.png`, from https://hanchenli.github.io/life/)
+   - Berkeley AI Systems PhD whose homepage literally says "I am a humble slave to Claude"
+   - More laughter
+
+3. Personal disclose (the real point of the warmup)
+   - I resonate with both of these — most of my own work is now done by AI, or with AI in the loop
+   - Daily chat and quick Q&A → ChatGPT
+   - Coding, research, slide-making — anything that needs hands-on work in a real environment → Claude Code / Claude's Cowork mode
+   - Today I want to share what I've learned from a while of seriously using these tools
+
+4. Throw out the main thread
+   - Three things specifically: why conversational AI isn't enough, why bare coding agents aren't enough either, and how to build a task-specific working environment for a coding agent
+   - Implicit (don't say it out loud): the very act of listing "for complex tasks I always use Claude Code" prompts students who still only use the web version to reflect on their own habits
 
 ### First half: one task, one continuous story (0–58 min)
 
@@ -93,6 +123,7 @@ Anchor the discussion to the problems bare Claude Code just exposed — don't tu
 - Why was it unstable? Because three things weren't externalized: rules (where to write), judge (what counts as correct), state (how to resume)
 - These three together are the harness: everything outside the model that lets an agent work stably
 - One-line comparison: a prompt governs this turn; a harness governs this kind
+- Hold on to those three for now — when we actually put the harness on screen in a moment, you'll find a fourth one hiding inside
 
 #### 30–37 min | Demo 3: reveal the harness + rerun [Demo+Talk]
 
@@ -115,7 +146,7 @@ Distill the four components of a minimal harness from all previous demos: struct
 
 > What I just showed is a teaching-sized minimal version — enough to see how a harness comes together. Now let me show you what a mature harness actually looks like, and whether the same idea transfers to other tasks.
 
-### Second half: same idea, different domains (58–95 min)
+### Second half: same idea, different domains (58–90 min)
 
 #### 58–68 min | From teaching version to real version: the full CP_problems repo [Demo]
 
@@ -137,12 +168,16 @@ Transition:
 
 Core line: **when a task has a clear metric, how a harness solidifies the feedback loop**
 Enter `repos/AKO4ALL`, show the setup → profile → iterate → track loop, ITERATIONS.md, trajectory/. Don't dive into kernel details — focus on the loop structure.
+Briefly mention sibling systems: autoresearch, autokernel — to make clear this isn't a one-off, it's a class of ideas being validated.
 
 ### Wrap-up (90–118 min)
 
 #### 90–96 min | Wrap-up and boundaries [Talk]
 
-Recap the two extension directions (solidify workflow / solidify evaluation loop); when it's worth building and when it isn't
+- Recap the two extension directions (solidify workflow / solidify evaluation loop)
+- When it's worth building and when it isn't
+- Adding complexity vs removing complexity: start with the simplest thing that works; as models get stronger, peel back the scaffolding that's no longer needed
+- Zoom out one level: building a harness is fundamentally about probing the boundary of the model's capability
 
 #### 96–103 min | Outlook: from harnesses to auto-research systems [Talk]
 
@@ -158,4 +193,12 @@ Invite a student to name a recurring task they do; discuss on the spot how to bu
 
 #### 112–118 min | Closing [Talk]
 
-Three sentences + key line: the model sets the ceiling; the harness sets the floor
+Three closing sentences:
+1. From chat to agent: not smarter — but able to act in an environment
+2. From agent to harness: not that the agent can't — but the general environment is too loose
+3. Once an error keeps recurring, don't just tweak the prompt — write it into the harness
+
+Three key lines:
+- The model sets the ceiling; the harness sets the floor
+- Stability doesn't come from longer prompts — it comes from a better harness
+- A good harness doesn't constrain the model, it unleashes it — that is what probing the boundary of the model's capability really means
