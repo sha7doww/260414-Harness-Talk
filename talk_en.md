@@ -30,10 +30,15 @@ Using Claude Code as the example, but the method applies to all Coding Agents (C
 - Four questions: What can the AI see? What can it do? How does it know it's correct? How does it resume next time?
 - Prompt vs harness: a prompt governs what to do *this turn*; a harness governs how *this kind of task* gets done reliably
 - The four components of a minimal harness:
-  - **Structure**: directories, naming, templates
-  - **Actions / Tools**: run / build / test scripts
-  - **Judge**: validators, checkers, benchmarks
-  - **Memory**: progress, iterations, logs
+  - **Observation**: what the AI can see — directories, naming, templates, CLAUDE.md
+  - **Tools**: what the AI can invoke — run / build / test scripts
+  - **Judge**: how to tell if it's correct — validators, checkers, benchmarks
+  - **Memory**: how to resume next time — progress, iterations, logs, git history
+- Another angle: break the harness down by task phase instead of by component
+  - **Before / Information**: what info to gather? how to gather it? how to organize the info and structure?
+  - **During / Tools**: which parts of the workflow to solidify? how to design tools (including SKILLs)?
+  - **After / Evaluation**: how to evaluate? how to budget evaluation time? which metrics to pick?
+  - **End / Memory**: how to design memory? how does experience accumulate? how observable should the system be?
 - A harness is never written in one shot: build → use → observe failures → write them back → use again (iterative loop)
 - Core principle: once an error keeps recurring, don't just tweak the prompt — write it into the harness
 
@@ -113,11 +118,19 @@ Set up the question, announce the running task for the first half, don't unpack 
 
 Use ChatGPT web (can be pre-recorded) to do the task; expose the "it can talk, but you have to do the work" limitation
 
-#### 12–22 min | Demo 2: Bare Claude Code does the same task [Demo]
+#### 12–20 min | Demo 2: Bare Claude Code does the same task [Demo]
 
 In an empty directory, use Claude Code on the same task; expose "it can do things, but it's not stable"
 
-#### 22–30 min | First abstraction: introducing the harness [Talk]
+#### 20–25 min | Demo 2.5: a task where the coding agent clearly wins [Demo]
+
+Switch to a task where the coding agent obviously shines (e.g. reading an unfamiliar repo to answer a question, or making a small edit in existing code and running the tests). Quick beat:
+- The essential difference isn't the model being smarter — it's that the agent directly interacts with your local environment, the process is transparent, and it can take on more complex tasks
+- So the "instability" from Demo 2 isn't because coding agents are bad — give them the right task and they clearly win
+- The problem is that the *general-purpose environment is too loose*, which is exactly the motivation for a harness
+- Aside: today's web-based conversational AI is actually also an agent — it just runs in its internal sandbox. The coding agent's advantage is that it runs in *your* real environment
+
+#### 25–32 min | First abstraction: introducing the harness [Talk]
 
 Anchor the discussion to the problems bare Claude Code just exposed — don't turn it into a concept intro:
 - Why was it unstable? Because three things weren't externalized: rules (where to write), judge (what counts as correct), state (how to resume)
@@ -125,7 +138,7 @@ Anchor the discussion to the problems bare Claude Code just exposed — don't tu
 - One-line comparison: a prompt governs this turn; a harness governs this kind
 - Hold on to those three for now — when we actually put the harness on screen in a moment, you'll find a fourth one hiding inside
 
-#### 30–37 min | Demo 3: reveal the harness + rerun [Demo+Talk]
+#### 32–40 min | Demo 3: reveal the harness + rerun [Demo+Talk]
 
 Switch to `demos/with-harness/`. Don't read files one by one — focus on the three key differences:
 - It now knows where to write (directory structure + CLAUDE.md)
@@ -134,13 +147,15 @@ Switch to `demos/with-harness/`. Don't read files one by one — focus on the th
 
 Then rerun the same task on top of the harness and compare results
 
-#### 37–50 min | Demo 4: iterating the harness [Demo]
+#### 40–50 min | Demo 4: iterating the harness [Demo]
 
 Switch to a harder task that triggers a failure. Don't correct the agent verbally — edit CLAUDE.md / pipeline.sh live to show how a harness grows out of failures
 
-#### 50–55 min | Second abstraction: the four components [Talk]
+#### 50–55 min | Second abstraction: four components + needs-first view [Talk]
 
-Distill the four components of a minimal harness from all previous demos: structure, actions, judge, memory
+Distill the four components of a minimal harness from all previous demos: **Observation / Tools / Judge / Memory** (what the AI can see / do / use to judge / carry over).
+Then flip to the other angle — "from the needs up", broken down by task phase: before (information) / during (tools, incl. SKILLs) / after (evaluation) / end (memory).
+Stress: there's no single canonical harness decomposition. Both views are just lenses — what matters is externalizing recurring problems.
 
 #### 55–58 min | Transition
 
@@ -168,7 +183,8 @@ Transition:
 
 Core line: **when a task has a clear metric, how a harness solidifies the feedback loop**
 Enter `repos/AKO4ALL`, show the setup → profile → iterate → track loop, ITERATIONS.md, trajectory/. Don't dive into kernel details — focus on the loop structure.
-Briefly mention sibling systems: autoresearch, autokernel — to make clear this isn't a one-off, it's a class of ideas being validated.
+Drop a concrete number to anchor it: on SOL-ExecBench L1-001 it hits an average **8.93×** speedup over **41 iterations** in **~2h** total — not to flex the result, but to show how far a fully automated evaluation loop can actually run on a real benchmark.
+Briefly mention sibling systems: autoresearch (Karpathy) / autokernel (RightNow-AI) — to make clear this isn't a one-off, it's a class of ideas being validated.
 
 ### Wrap-up (90–118 min)
 
@@ -187,11 +203,19 @@ Push today's topic one step further: if harnesses keep growing, what do they bec
 - Land on your own take: no universal auto-scientist in the short term, but verifiable sub-tasks will be harness-ified quickly
 - Pull it back to a general setting: not just research — homework, experiment reproduction, benchmark runs all face the same question: which parts can be outsourced to a harness, which still require human judgment
 
-#### 103–112 min | Interactive [Interaction]
+#### 103–108 min | One level deeper: a few open questions [Talk]
+
+Don't give answers — just put a few questions I'm chewing on out there, and let the audience carry them:
+- **The SKILL shift**: SKILLs are becoming part of the harness — generated on demand, both solid and open, but inherently saddled with the unpredictability of natural language
+- **AI assisting humans ↔ humans assisting AI**: the roles are flipping; watch not just the outputs but who is babysitting whom during the process
+- **Automating harness optimization**: can an agent improve its own harness?
+- **Meta-harness**: at a higher level, can the harness feed back into the model? The capability boundary we probe with a harness might end up re-ingested into the next generation of models
+
+#### 108–114 min | Interactive [Interaction]
 
 Invite a student to name a recurring task they do; discuss on the spot how to build a harness for it. Or open Q&A.
 
-#### 112–118 min | Closing [Talk]
+#### 114–118 min | Closing [Talk]
 
 Three closing sentences:
 1. From chat to agent: not smarter — but able to act in an environment
